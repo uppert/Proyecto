@@ -1,0 +1,144 @@
+create database Productos;
+use Productos;
+create table usuario(
+userr varchar(50) not null,
+clave varchar (50) not null,
+constraint pk_user primary key(userr)
+);
+
+create table cliente(
+id_cliente int identity(1,1) not null,
+nombre varchar(50) not null,
+apellido varchar(50) not null,
+direccion varchar(50) not null,
+telefono varchar(50) not null,
+constraint pk_id_cliente primary key(id_cliente)
+);
+
+create table laterales(
+cod_laterales int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_laterales primary key(cod_laterales)
+);
+
+create table travesaño_perrera(
+cod_travesaño_perrera int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_trabesaño primary key(cod_travesaño_perrera)
+);
+
+create table inferior(
+cod_inferior int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_inferior primary key(cod_inferior)
+);
+
+create table fierro_largo(
+cod_fierro_largo int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_fierro_largo primary key(cod_fierro_largo)
+);
+
+create table fierro_corto(
+cod_fierro_corto int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_fierro_corto primary key(cod_fierro_corto)
+);
+
+create table perfiles(
+cod_perfiles int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_perfiles primary key(cod_perfiles)
+);
+
+
+create table superior(
+cod_superior int identity(1,1) not null,
+medida varchar(50) not null,
+precio int not null,
+lugar varchar(50) not null,
+constraint pk_cod_superior primary key(cod_superior)
+);
+
+
+create table presupuesto(
+cod_presupuesto int identity(1,1) not null,
+id_cliente int ,		
+cod_laterales int,
+cod_travesaño_perrera int,
+cod_inferior int,
+cod_fierro_largo int,
+cod_fierro_corto int,
+cod_perfiles int,
+cod_superior int,
+precio int,
+estado varchar(20) not null,
+constraint pk_cod_presupuesto primary key(cod_presupuesto),
+constraint fk_cliente_presupuesto foreign key(id_cliente) references cliente,
+constraint fk_laterales_presupuesto foreign key(cod_laterales) references laterales,
+constraint fk_travesaño_presupuesto foreign key(cod_travesaño_perrera) references travesaño_perrera,
+constraint fk_inferior_presupuesto foreign key(cod_inferior) references inferior,
+constraint fk_fierro_largo_presupuesto foreign key(cod_fierro_largo) references fierro_largo,
+constraint fk_fierro_corto_presupuesto foreign key(cod_fierro_corto) references fierro_corto,
+constraint fk_perfiles_presupuesto foreign key(cod_perfiles) references perfiles,
+constraint fk_superior_presupuesto foreign key(cod_superior) references superior
+);
+
+
+
+insert into perfiles values('20x20x1.5mm',3102,'sodimac');
+insert into superior values('25x15x1.5mm',3850,'sodimac');
+insert into inferior values('25x15x1.5mm',3850,'sodimac');
+insert into laterales values('40x30x1.5mm',7128,'sodimac');
+insert into travesaño_perrera values('No lleva',0,'No lleva')
+insert into travesaño_perrera values('25x15x1.5mm',3850,'sodimac')
+insert into fierro_largo values('No lleva',0,'No lleva')
+insert into fierro_largo values('15x10x15mm',2500,'sodimac')
+insert into fierro_corto values('No lleva',0,'No lleva')
+insert into fierro_corto values('10x10x1.5mm',2000,'sodimac')
+insert into usuario values('Administrador', 123456);
+
+
+
+use [Productos]
+go
+SET ANSI_NULLS ON
+go
+SET QUOTED_IDENTIFIER ON
+go
+Create PROCEDURE [dbo].[ValidarUsuario]
+@userr varchar(50),
+@clave varchar(50)
+as
+begin
+	select COUNT(*) from usuario where userr=@userr and clave = @clave
+end
+
+
+use Productos; 
+SELECT cliente.nombre,cliente.apellido,cliente.direccion, cliente.telefono, presupuesto.precio, presupuesto.estado,
+fierro_corto.medida as 'Fierro Corto', fierro_largo.medida as 'fierro largo',laterales.medida as 'Lateral',perfiles.medida as 'Perfiles',superior.medida as 'Superior',inferior.medida as 'Inferior',travesaño_perrera.medida as 'Travesaño' 
+FROM ((((((((cliente INNER JOIN
+                         presupuesto ON cliente.id_cliente = presupuesto.id_cliente) INNER JOIN
+                         fierro_corto ON presupuesto.cod_fierro_corto = fierro_corto.cod_fierro_corto) INNER JOIN
+                         fierro_largo ON presupuesto.cod_fierro_largo = fierro_largo.cod_fierro_largo) INNER JOIN
+                         inferior ON presupuesto.cod_inferior = inferior.cod_inferior) INNER JOIN
+                         laterales ON presupuesto.cod_laterales = laterales.cod_laterales) INNER JOIN
+                         perfiles ON presupuesto.cod_perfiles = perfiles.cod_perfiles) INNER JOIN
+                         superior ON presupuesto.cod_superior = superior.cod_superior) INNER JOIN
+                         [travesaño_perrera] ON presupuesto.[cod_travesaño] = [travesaño_perrera].[cod_travesaño]), usuario;
+
+
+

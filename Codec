@@ -1,0 +1,1050 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+using System.Data.SqlClient;
+using Gestion;
+
+namespace Test
+{
+    public partial class Form2 : Form
+    {
+        public Form2()
+        {
+            InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+        }
+        GestionDatos ges = new GestionDatos();
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.laterales' Puede moverla o quitarla según sea necesario.
+            this.lateralesTableAdapter.Fill(this.DataSet1.laterales);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.fierro_corto' Puede moverla o quitarla según sea necesario.
+            this.fierro_cortoTableAdapter.Fill(this.DataSet1.fierro_corto);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.fierro_largo' Puede moverla o quitarla según sea necesario.
+            this.fierro_largoTableAdapter.Fill(this.DataSet1.fierro_largo);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.inferior' Puede moverla o quitarla según sea necesario.
+            this.inferiorTableAdapter.Fill(this.DataSet1.inferior);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.perfiles' Puede moverla o quitarla según sea necesario.
+            this.perfilesTableAdapter.Fill(this.DataSet1.perfiles);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.superior' Puede moverla o quitarla según sea necesario.
+            this.superiorTableAdapter.Fill(this.DataSet1.superior);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.trabesaño_perrera' Puede moverla o quitarla según sea necesario.
+            this.travesaño_perreraTableAdapter.Fill(this.DataSet1.travesaño_perrera);
+            DataTable dt = new DataTable();
+
+            dgvPROSS.DataSource = ges.Consulta("SELECT cliente.nombre,cliente.apellido,cliente.direccion, cliente.telefono, presupuesto.precio, presupuesto.estado,fierro_corto.medida as 'Fierro Corto', fierro_largo.medida as 'fierro largo',laterales.medida as 'Lateral',perfiles.medida as 'Perfiles',superior.medida as 'Superior',inferior.medida as 'Inferior',travesaño_perrera.medida as 'Travesaño' FROM ((((((((cliente INNER JOIN presupuesto ON cliente.id_cliente = presupuesto.id_cliente) INNER JOIN fierro_corto ON presupuesto.cod_fierro_corto = fierro_corto.cod_fierro_corto) INNER JOIN fierro_largo ON presupuesto.cod_fierro_largo = fierro_largo.cod_fierro_largo) INNER JOIN inferior ON presupuesto.cod_inferior = inferior.cod_inferior) INNER JOIN laterales ON presupuesto.cod_laterales = laterales.cod_laterales) INNER JOIN perfiles ON presupuesto.cod_perfiles = perfiles.cod_perfiles) INNER JOIN superior ON presupuesto.cod_superior = superior.cod_superior) INNER JOIN [travesaño_perrera] ON presupuesto.[cod_travesaño_perrera] = [travesaño_perrera].[cod_travesaño_perrera]), usuario");
+
+            dt = ges.Consulta("select * from laterales");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila = dt.NewRow();
+            fila["medida"] = "Seleccione";
+            fila["cod_laterales"] = "0";
+            dt.Rows.InsertAt(fila, 0);
+            //cargar combobox
+            cbLaterales.DataSource = dt;
+            cbLaterales.DisplayMember = "medida";//texto q se muestra al usuario
+            cbLaterales.ValueMember = "cod_laterales";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM perfiles");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila1 = dt.NewRow();
+            fila1["medida"] = "Seleccione";
+            fila1["cod_perfiles"] = "0";
+            dt.Rows.InsertAt(fila1, 0);
+            //cargar combobox
+            cbPerfiles.DataSource = dt;
+            cbPerfiles.DisplayMember = "medida";//texto q se muestra al usuario
+            cbPerfiles.ValueMember = "cod_perfiles";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM inferior");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila2 = dt.NewRow();
+            fila2["medida"] = "Seleccione";
+            fila2["cod_inferior"] = "0";
+            dt.Rows.InsertAt(fila2, 0);
+            //cargar combobox
+            cbInferior.DataSource = dt;
+            cbInferior.DisplayMember = "medida";//texto q se muestra al usuario
+            cbInferior.ValueMember = "cod_inferior";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM superior");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila3 = dt.NewRow();
+            fila3["medida"] = "Seleccione";
+            fila3["cod_superior"] = "0";
+            dt.Rows.InsertAt(fila3, 0);
+            //cargar combobox
+            cbSuperior.DataSource = dt;
+            cbSuperior.DisplayMember = "medida";//texto q se muestra al usuario
+            cbSuperior.ValueMember = "cod_superior";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM travesaño_perrera where cod_travesaño_perrera>1");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila4 = dt.NewRow();
+            fila4["medida"] = "Travesaño";
+            fila4["cod_travesaño_perrera"] = "0";
+            dt.Rows.InsertAt(fila4, 0);
+            //cargar combobox
+            cbTabesañoP.DataSource = dt;
+            cbTabesañoP.DisplayMember = "medida";//texto q se muestra al usuario
+            cbTabesañoP.ValueMember = "cod_travesaño_perrera";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM fierro_corto where cod_fierro_corto>1");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila5 = dt.NewRow();
+            fila5["medida"] = "Fierro Corto";
+            fila5["cod_fierro_corto"] = "0";
+            dt.Rows.InsertAt(fila5, 0);
+            //cargar combobox
+            cbCortoP.DataSource = dt;
+            cbCortoP.DisplayMember = "medida";//texto q se muestra al usuario
+            cbCortoP.ValueMember = "cod_fierro_corto";//valor o codigo interno
+
+            dt = ges.Consulta("SELECT * FROM fierro_largo where cod_fierro_largo>1");
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila6 = dt.NewRow();
+            fila6["medida"] = "Fierro Largo";
+            fila6["cod_fierro_largo"] = "0";
+            dt.Rows.InsertAt(fila6, 0);
+            //cargar combobox
+            cbLargoP.DataSource = dt;
+            cbLargoP.DisplayMember = "medida";//texto q se muestra al usuario
+            cbLargoP.ValueMember = "cod_fierro_largo";//valor o codigo interno
+
+            dt = ges.Consulta("Select * from cliente");
+            DataRow fila7 = dt.NewRow();
+            fila7["apellido"] = "Seleccione";
+            fila7["id_cliente"] = "0";
+            dt.Rows.InsertAt(fila7, 0);
+            cbEliminarPree.DataSource = dt;
+            cbEliminarPree.DisplayMember = "apellido";
+            cbEliminarPree.ValueMember = "id_cliente";
+            
+            
+            cbTipo.Items.Insert(0, "Seleccione");
+            cbTipo.Items.Insert(1, "perfiles");
+            cbTipo.Items.Insert(2, "superior");
+            cbTipo.Items.Insert(3, "inferior");
+            cbTipo.Items.Insert(4, "travesaño_perrera");
+            cbTipo.Items.Insert(5, "fierro_corto");
+            cbTipo.Items.Insert(6, "fierro_largo");
+            cbTipo.Items.Insert(7, "laterales");
+            cbTipo.SelectedIndex = 0;
+
+            cbBusqueda.Items.Insert(0, "Seleccione");
+            cbBusqueda.Items.Insert(1, "perfiles");
+            cbBusqueda.Items.Insert(2, "superior");
+            cbBusqueda.Items.Insert(3, "inferior");
+            cbBusqueda.Items.Insert(4, "travesaño_perrera");
+            cbBusqueda.Items.Insert(5, "fierro_corto");
+            cbBusqueda.Items.Insert(6, "fierro_largo");
+            cbBusqueda.Items.Insert(7, "laterales");
+            cbBusqueda.SelectedIndex = 0;
+            this.reportViewer1.RefreshReport();
+            this.reportViewer1.RefreshReport();
+
+            
+            cbEditar.Items.Insert(0, "perfiles");
+            cbEditar.Items.Insert(1, "superior");
+            cbEditar.Items.Insert(2, "inferior");
+            cbEditar.Items.Insert(3, "travesaño_perrera");
+            cbEditar.Items.Insert(4, "fierro_corto");
+            cbEditar.Items.Insert(5, "fierro_largo");
+            cbEditar.Items.Insert(6, "laterales");
+            cbEditar.SelectedIndex = 0;
+
+        }
+        public int PrecioL(string medida, string tabla) {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_laterales = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+           
+            
+        }
+        public int PrecioP(string medida, string tabla)
+        {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_perfiles = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+
+
+        }
+        public int PrecioS(string medida, string tabla)
+        {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_superior = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+
+
+        }
+        public int PrecioI(string medida, string tabla)
+        {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_inferior = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+
+
+
+        }
+        public int PrecioT(string medida, string tabla)
+        {
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_travesaño_perrera = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+        }
+        public int PrecioFL(string medida, string tabla)
+        {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_fierro_largo = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+        }
+        public int PrecioFC(string medida, string tabla)
+        {
+
+            try
+            {
+                String precio = ges.consultaP("select precio from " + tabla + " where cod_fierro_corto = " + medida + "");
+
+                //String sss = "select precio from '"+tabla+"' where medida = '"+medida+"'";
+                //SqlCommand cmd = new SqlCommand()
+                return Convert.ToInt32(precio);
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
+        }
+        private void btnPresupuesto_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int metros = 0;
+                int precioL = 0;
+                int precioP = 0;
+                int precioS = 0;
+                int precioI = 0;
+                if (txtMetros.Text == "")
+                {
+                    lbMetro.Visible = true;
+                }
+                else
+                {
+                     metros = Convert.ToInt32(txtMetros.Text);
+                     lbMetro.Visible = false;
+                }
+                if (cbLaterales.SelectedIndex == 0)
+                {
+                    lbLaterales.Visible = true;
+                }
+                else
+                {
+                    precioL = PrecioL(cbLaterales.SelectedValue.ToString(), "laterales");
+                    lbLaterales.Visible = false;
+                }
+                if (cbPerfiles.SelectedIndex==0)
+                {
+                    lbPerfiles.Visible = true;
+                }
+                else
+                {
+                    precioP = PrecioP(cbPerfiles.SelectedValue.ToString(), "perfiles");
+                    lbPerfiles.Visible = false;
+                }
+                if (cbSuperior.SelectedIndex==0)
+                {
+                   lbSuperior.Visible = true;
+                }
+                else
+                {
+                    precioS = PrecioS(cbSuperior.SelectedValue.ToString(), "superior");
+                    lbSuperior.Visible = false;
+                }
+                if (cbInferior.SelectedIndex==0)
+                {
+                    lbInferior.Visible = true;
+                }
+                else
+                {
+                    precioI = PrecioI(cbInferior.SelectedValue.ToString(), "inferior");
+                    lbInferior.Visible = false;
+                }
+                
+                double total = precioL / 3 + precioP * 3 + precioI / 4 + precioS / 4 ;
+                if (chbPuntas.Checked)
+                {
+                    total = total + 2400; 
+                }
+                if (chbArgollas.Checked)
+                {
+                     total = total + 1200;
+                }
+                if (chbDibujo.Checked)
+                {
+                    total = total + 2400;
+                }
+                int precioT = 0;
+                int precioFL = 0;
+                int precioFC = 0;
+                if (rbSi.Checked)
+                {
+                    if (cbTabesañoP.SelectedIndex==0)
+                    {
+                        lbTrabesaño.Visible = true;
+                    }
+                    else
+                    {
+                        precioT = PrecioT(cbTabesañoP.SelectedValue.ToString(), "travesaño_perrera");
+                        lbTrabesaño.Visible = false;
+                    }
+                    if (cbLargoP.SelectedIndex==0)
+                    {
+                        lbLargoP.Visible = true;
+                    }
+                    else
+                    {
+                        precioFL = PrecioFL(cbLargoP.SelectedValue.ToString(), "fierro_largo");
+                        lbLargoP.Visible = false;
+                    }
+                    if (cbCortoP.SelectedIndex==0)
+                    {
+                        lbCortoP.Visible=true;
+                    }
+                    else
+                    {
+                        precioFC = PrecioFC(cbCortoP.SelectedValue.ToString(), "fierro_corto");
+                        lbCortoP.Visible = false;
+                    }
+                    //falta el calculo de la perrera
+                    total = (precioT / 4 + precioFC + precioFL) + total;
+                   
+                }
+                total = Math.Round( total* (metros/1.5));
+                Resultado frm = new Resultado();
+                if (lbMetro.Visible==false&&lbLaterales.Visible==false&&lbPerfiles.Visible==false&&
+                    lbSuperior.Visible==false&&lbInferior.Visible==false&&lbTrabesaño.Visible==false
+                    &&lbCortoP.Visible==false&&lbLargoP.Visible==false)
+                {
+                    
+                    frm.Mensaje = total;
+                    frm.ShowDialog();
+                }
+                
+
+                //Si el presupuesto es rechazado se vuelve todo como la la pantalla principal
+                if (frm.rechazado == 1)
+                {
+                    txtMetros.Text = "";
+                    txtMetros.Focus();
+                    cbCortoP.SelectedValue = 0;
+                    cbInferior.SelectedValue = 0;
+                    cbLargoP.SelectedValue = 0;
+                    cbLaterales.SelectedValue = 0;
+                    cbPerfiles.SelectedValue = 0;
+                    cbSuperior.SelectedValue = 0;
+                    cbTabesañoP.SelectedValue = 0;
+                    rbNo.Checked = false;
+                    rbSi.Checked = false;
+                    chbArgollas.Checked = false;
+                    chbDibujo.Checked = false;
+                    chbPuntas.Checked = false;
+                    gbPerrera.Enabled = false;
+                    lbCortoP.Visible = false;
+                    lbLargoP.Visible = false;
+                    lbTrabesaño.Visible = false;
+                    lbLaterales.Visible = false;
+                    lbPerfiles.Visible = false;
+                    lbSuperior.Visible = false;
+                    lbInferior.Visible = false;
+                }
+                else
+                {
+                    int id_cli = frm.cod_cliente;
+                    int cod_laterales = Convert.ToInt32(cbLaterales.SelectedIndex);
+                    int cod_perfiles = Convert.ToInt32(cbPerfiles.SelectedIndex);
+                    int cod_inferior = Convert.ToInt32(cbInferior.SelectedIndex);
+                    int cod_superior = Convert.ToInt32(cbSuperior.SelectedIndex);
+                    int? cod_travesaño = null;
+                    int? cod_fierro_corto = null;
+                    int? cod_fierro_largo = null;
+                    if (rbSi.Checked)
+                    {
+                        cod_travesaño = Convert.ToInt32(cbTabesañoP.SelectedIndex);
+                        cod_fierro_corto = Convert.ToInt32(cbCortoP.SelectedIndex);
+                        cod_fierro_largo = Convert.ToInt32(cbLargoP.SelectedIndex);
+                    }
+                    if (rbSi.Checked)
+                    {
+                        string sql = "insert into presupuesto values (" + id_cli + ", " + cod_laterales + ", " + cod_travesaño + ", " + cod_inferior + ", "
+                            + cod_fierro_largo + ", " + cod_fierro_corto + ", " + cod_perfiles + ", " + cod_superior + ", " + total + ", 'Aprobado')";
+                        if (ges.Operacion(sql))
+                        {
+                            txtMetros.Text = "";
+                            txtMetros.Focus();
+                            cbCortoP.SelectedIndex = 0;
+                            cbInferior.SelectedIndex = 0;
+                            cbLargoP.SelectedIndex = 0;
+                            cbLaterales.SelectedIndex = 0;
+                            cbPerfiles.SelectedIndex = 0;
+                            cbSuperior.SelectedIndex = 0;
+                            cbTabesañoP.SelectedIndex = 0;
+                            rbNo.Checked = false;
+                            rbSi.Checked = false;
+                            chbArgollas.Checked = false;
+                            chbDibujo.Checked = false;
+                            chbPuntas.Checked = false;
+                            gbPerrera.Enabled = false;
+                            lbCortoP.Visible = false;
+                            lbLargoP.Visible = false;
+                            lbTrabesaño.Visible = false;
+                            lbLaterales.Visible = false;
+                            lbPerfiles.Visible = false;
+                            lbSuperior.Visible = false;
+                            lbInferior.Visible = false;
+                            lbPresupuesoR.Text = "Presupuesto Guardado!";
+                                lbPresupuesoR.Visible=true;
+                        }
+                        else
+                        {
+                            
+                            
+                        }
+                    }
+                    else
+                    {
+                        string sql2 = "insert into presupuesto values(" + id_cli + ", " + cod_laterales + ", 1 , "
+                                + cod_inferior + ", 1, 1 , " + cod_perfiles + ", " + cod_superior + ", " + total + ", 'Aprobado')";
+                        if (ges.Operacion(sql2))
+                        {
+                            txtMetros.Text = "";
+                            txtMetros.Focus();
+                            cbCortoP.SelectedIndex = 0;
+                            cbInferior.SelectedIndex = 0;
+                            cbLargoP.SelectedIndex = 0;
+                            cbLaterales.SelectedIndex = 0;
+                            cbPerfiles.SelectedIndex = 0;
+                            cbSuperior.SelectedIndex = 0;
+                            cbTabesañoP.SelectedIndex = 0;
+                            rbNo.Checked = false;
+                            rbSi.Checked = false;
+                            chbArgollas.Checked = false;
+                            chbDibujo.Checked = false;
+                            chbPuntas.Checked = false;
+                            gbPerrera.Enabled = false;
+                            lbCortoP.Visible = false;
+                            lbLargoP.Visible = false;
+                            lbTrabesaño.Visible = false;
+                            lbLaterales.Visible = false;
+                            lbPerfiles.Visible = false;
+                            lbSuperior.Visible = false;
+                            lbInferior.Visible = false;
+                            lbPresupuesoR.Text = "Presupuesto Guardado!";
+                            lbPresupuesoR.Visible = true;
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+
+                    
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void txtMetros_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void rbSi_CheckedChanged(object sender, EventArgs e)
+        {
+            gbPerrera.Enabled = true;
+        }
+        private void rbNo_CheckedChanged(object sender, EventArgs e)
+        {
+            gbPerrera.Enabled = false;
+        }
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void BtnCancelar_Click(object sender, EventArgs e)
+        {
+            txtMetros.Text = "";
+            txtMetros.Focus();
+            cbCortoP.SelectedValue = 0;
+            cbInferior.SelectedValue = 0;
+            cbLargoP.SelectedValue = 0;
+            cbLaterales.SelectedValue = 0;
+            cbPerfiles.SelectedValue = 0;
+            cbSuperior.SelectedValue = 0;
+            cbTabesañoP.SelectedValue = 0;
+            rbNo.Checked = false;
+            rbSi.Checked = false;
+            chbArgollas.Checked = false;
+            chbDibujo.Checked = false;
+            chbPuntas.Checked = false;
+            gbPerrera.Enabled = false;
+            lbCortoP.Visible = false;
+            lbLargoP.Visible = false;
+            lbTrabesaño.Visible = false;
+            lbLaterales.Visible = false;
+            lbPerfiles.Visible = false;
+            lbSuperior.Visible = false;
+            lbInferior.Visible = false;
+            lbMetro.Visible = false;
+        }
+        private void rbCuadrado_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbCuadrado.Checked)
+            {
+                gbCuadrado2.Enabled = true;
+                gbRedondo.Enabled = false;
+            }
+        }
+        private void rbRedondo_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbRedondo.Checked)
+            {
+                gbRedondo.Enabled = true;
+                gbCuadrado2.Enabled = false;
+            }
+        }
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
+
+        }
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                String tipo = "";
+                if (cbTipo.SelectedIndex == 0)
+                {
+                    lbtipo.Visible = true;
+                }
+                else
+                {
+                    tipo = cbTipo.SelectedItem.ToString();
+                    lbtipo.Visible = false;
+                }
+                int precio =0;
+                if (txtPrecio.Text=="")
+                {
+                    lbPrecio.Visible = true;
+                }else
+	{
+                    precio = Convert.ToInt32(txtPrecio.Text);
+                    lbPrecio.Visible = false;
+	}
+                String lugar = "";
+                if (txtlugar.Text =="")
+                {
+                    lbLugar.Visible = true;
+                }
+                else
+                {
+                    lugar = txtlugar.Text;
+                    lbLugar.Visible = false;
+                }
+                string medida="";
+                if (rbCuadrado.Checked)
+                {
+                    String largo = "";
+                    if (txtLargoCua.Text=="")
+                    {
+                        lbLargo.Visible = true;
+                    }
+                    else
+                    {
+                        largo = txtLargoCua.Text;
+                        lbLargo.Visible = false;
+                    }
+                    String Ancho = "";
+                    if (txtAnchoCua.Text=="")
+                    {
+                        lbAncho.Visible = true;
+                    }
+                    else
+                    {
+                        Ancho = txtAnchoCua.Text;
+                        lbAncho.Visible = false;
+                    }
+                    String espesor = "";
+                    if (txtEspesorCua.Text=="")
+                    {
+                        lbEspesor.Visible = true;
+                    }
+                    else
+                    {
+                        espesor = txtEspesorCua.Text;
+                        lbEspesor.Visible = false;
+                    }
+                     medida = largo + "x" + Ancho + "x" + espesor + "mm";
+                }
+                else
+                {
+                    string diametro = "";
+                    if (txtDiametro.Text=="")
+	{
+        lbDiametro.Visible = true;
+    }
+                    else
+                    {
+                        diametro = txtDiametro.Text;
+                        lbDiametro.Visible = false;
+                    }
+                    String espesorRedondo = "";
+                    if (txtEspesorRedondo.Text=="")
+                    {
+                        lbEspesorCir.Visible = true;
+                    }
+                    else
+                    {
+                        lbEspesorCir.Visible = false;
+                        espesorRedondo = txtEspesorRedondo.Text;
+                    }
+                     medida = diametro + "x" + espesorRedondo + "mm";
+                }
+                string sql = "insert into "+tipo+" values('"+medida+"', "+precio+", '"+lugar+"')";
+                if (ges.Operacion(sql))
+                {
+                    cbTipo.SelectedIndex = 0;
+                    txtEspesorRedondo.Text = "";
+                    txtEspesorCua.Text = "";
+                    txtPrecio.Text = "";
+                    txtPrecio.Focus();
+                    txtLargoCua.Text = "";
+                    txtAnchoCua.Text = "";
+                    txtEspesorRedondo.Text = "";
+                    txtDiametro.Text = "";
+                    txtlugar.Text = "";
+                    lbRespuestaCot.Text = "Datos Guardados!";
+                    lbRespuestaCot.Visible = true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private void cbBusqueda_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string tabla = cbBusqueda.SelectedItem.ToString();
+
+            dgvMuestra.DataSource = ges.Consulta("select * from "+tabla+"");
+            dgvMuestra.Visible = true;
+
+
+        }
+        private void txtPrecio_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void txtAnchoCua_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void txtLargoCua_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void txtEspesorCua_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void txtDiametro_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 48 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+        private void txtEspesorRedondo_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            int cod = Convert.ToInt32(e.KeyChar);
+            if (cod >= 49 && cod <= 57 || cod == 46 || cod == 8)
+            {
+                e.Handled = false;
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void btnCancelCot_Click(object sender, EventArgs e)
+        {
+            cbTipo.SelectedIndex = 0;
+            txtEspesorRedondo.Text = "";
+            txtEspesorCua.Text = "";
+            txtPrecio.Text = "";
+            txtPrecio.Focus();
+            txtLargoCua.Text = "";
+            txtAnchoCua.Text = "";
+            txtEspesorRedondo.Text = "";
+            txtDiametro.Text = "";
+            txtlugar.Text = "";
+            lbEspesorCir.Visible = false;
+            lbEspesor.Visible = false;
+            lbPrecio.Visible = false;
+            lbtipo.Visible = false;
+            lbLugar.Visible = false;
+            lbAncho.Visible = false;
+            lbLargo.Visible = false;
+            lbDiametro.Visible = false;
+        }
+
+        private void btnCerrar_Click(object sender, EventArgs e)
+        {
+            Form1 frm = new Form1();
+            frm.ShowDialog();
+            this.Close();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.laterales' Puede moverla o quitarla según sea necesario.
+            this.lateralesTableAdapter.Fill(this.DataSet1.laterales);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.fierro_corto' Puede moverla o quitarla según sea necesario.
+            this.fierro_cortoTableAdapter.Fill(this.DataSet1.fierro_corto);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.fierro_largo' Puede moverla o quitarla según sea necesario.
+            this.fierro_largoTableAdapter.Fill(this.DataSet1.fierro_largo);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.inferior' Puede moverla o quitarla según sea necesario.
+            this.inferiorTableAdapter.Fill(this.DataSet1.inferior);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.perfiles' Puede moverla o quitarla según sea necesario.
+            this.perfilesTableAdapter.Fill(this.DataSet1.perfiles);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.superior' Puede moverla o quitarla según sea necesario.
+            this.superiorTableAdapter.Fill(this.DataSet1.superior);
+            // TODO: esta línea de código carga datos en la tabla 'DataSet1.trabesaño_perrera' Puede moverla o quitarla según sea necesario.
+            this.travesaño_perreraTableAdapter.Fill(this.DataSet1.travesaño_perrera);
+
+            dgvPROSS.DataSource = ges.Consulta("SELECT cliente.nombre,cliente.apellido,cliente.direccion, cliente.telefono, presupuesto.precio, presupuesto.estado,fierro_corto.medida as 'Fierro Corto', fierro_largo.medida as 'fierro largo',laterales.medida as 'Lateral',perfiles.medida as 'Perfiles',superior.medida as 'Superior',inferior.medida as 'Inferior',travesaño_perrera.medida as 'Travesaño' FROM ((((((((cliente INNER JOIN presupuesto ON cliente.id_cliente = presupuesto.id_cliente) INNER JOIN fierro_corto ON presupuesto.cod_fierro_corto = fierro_corto.cod_fierro_corto) INNER JOIN fierro_largo ON presupuesto.cod_fierro_largo = fierro_largo.cod_fierro_largo) INNER JOIN inferior ON presupuesto.cod_inferior = inferior.cod_inferior) INNER JOIN laterales ON presupuesto.cod_laterales = laterales.cod_laterales) INNER JOIN perfiles ON presupuesto.cod_perfiles = perfiles.cod_perfiles) INNER JOIN superior ON presupuesto.cod_superior = superior.cod_superior) INNER JOIN [travesaño_perrera] ON presupuesto.[cod_travesaño_perrera] = [travesaño_perrera].[cod_travesaño_perrera]), usuario");
+            lbPRESupe.Visible = false;
+            
+            lbPresupuesoR.Visible = false;
+
+            
+            lbRespuestaCot.Visible = false;
+        }
+
+        private void groupBox9_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+        private string tabla = ""; 
+        private void cbEditar_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            tabla = cbEditar.Text;
+
+            dgvEditar.DataSource = ges.Consulta("select * from " + tabla + "");
+            dgvEditar.Visible = true;
+            lbTabla.Text = tabla;
+            
+            DataTable dt = new DataTable();
+            dt = ges.Consulta("SELECT * FROM "+tabla+"");
+
+            //codigo para mostrar la opcion de SElECCIONE
+            DataRow fila = dt.NewRow();
+            
+            fila["medida"] = "Seleccione";
+            fila["cod_"+tabla+""] = "0";
+            dt.Rows.InsertAt(fila, 0);
+            //cargar combobox
+            cbMedidaCOmbo.DataSource = dt;
+            cbMedidaCOmbo.DisplayMember = "medida";//texto q se muestra al usuario
+            cbMedidaCOmbo.ValueMember = "cod_" + tabla + "";//valor o codigo interno
+
+
+           
+        }
+
+        private void dgvEditar_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+        private string codigo = "";
+        private void cbMedidaCOmbo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                String medida = cbMedidaCOmbo.Text;
+                 codigo = cbMedidaCOmbo.SelectedIndex.ToString();
+                int precio = ges.consultaCliente("select precio from " + tabla + " where cod_" + tabla + " = " + codigo + " ");
+                string lugar = ges.consultaP("select lugar from " + tabla + " where cod_" + tabla + " = " + codigo + "");
+                txtLugarr.Text = lugar;
+                txtPrsio.Text = precio.ToString();
+                if (medida == "System.Data.DataRowView")
+                {
+
+                    lbMedidaEd.Visible = false;
+                }
+                else {
+                    lbMedidaEd.Text = medida;
+                    lbMedidaEd.Visible = true;
+                }
+                
+
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+
+
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (MessageBox.Show("Desea eliminar Presupuesto", "Eliminar",
+         MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+         == DialogResult.Yes)
+                {
+                    if (cbMedidaCOmbo.SelectedIndex != 0 && cbMedidaCOmbo.SelectedIndex != 1)
+                    {
+                        if (ges.Operacion("delete from " + tabla + " where cod_" + tabla + " = " + codigo + ""))
+                        {
+                            lbMensajeseli.Text = "Material Eliminado";
+                            lbMensajeseli.Visible = true;
+                            dgvEditar.DataSource = ges.Consulta("select * from " + tabla + "");
+                            txtPrsio.Text = "";
+                            txtLugarr.Text = "";
+                            cbMedidaCOmbo.SelectedIndex = 0;
+                            lbMedidaEd.Visible = false;
+                            lbMedidcombooa.Visible = false;
+                        }
+                        else
+                        {
+                            lbMensajeseli.Text = "error en eliminar material";
+                            lbMensajeseli.Visible = true;
+                            lbMedidcombooa.Visible = false;
+                        }
+                    }
+                    else
+                    {
+                        lbMedidcombooa.Text = "Seleccione una medida para eliminar";
+                        lbMedidcombooa.Visible = true;
+                    }
+                }
+                
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cbMedidaCOmbo.SelectedIndex != 0 && cbMedidaCOmbo.SelectedIndex !=1)
+                {
+                    string precio = txtPrsio.Text;
+                string lugar = txtLugarr.Text;
+                if (ges.Operacion("update " + tabla + " set precio=" + precio + " , lugar='" + lugar + "' where cod_" + tabla + " = " + codigo + ";"))
+                {
+                    lbMensajeseli.Text = "Material editado";
+                    lbMensajeseli.Visible = true;
+                    dgvEditar.DataSource = ges.Consulta("select * from " + tabla + "");
+                    txtPrsio.Text = "";
+                    txtLugarr.Text = "";
+                    cbMedidaCOmbo.SelectedIndex = 0;
+                    lbMedidaEd.Visible = false;
+                    lbMedidcombooa.Visible = false;
+                }
+                else {
+                    lbMensajeseli.Text = "Error en editar material";
+                    lbMensajeseli.Visible = true;
+                    lbMedidcombooa.Visible = false;
+                }
+                }
+                else
+                {
+                    lbMedidcombooa.Text = "Selecione una medida para editar";
+                    lbMedidcombooa.Visible = true;
+                }
+                
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+        }
+
+        private void btnEliminarPress_Click(object sender, EventArgs e)
+        {
+          
+               
+            try
+            {
+
+                if (MessageBox.Show("Desea eliminar Presupuesto", "Eliminar",
+         MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+         == DialogResult.Yes)
+                {
+                    int codigoss = cbEliminarPree.SelectedIndex;
+                    //Application.Exit();
+                    if (codigoss != 0)
+                    {
+                        if (ges.Operacion("delete from presupuesto where id_cliente = " + codigoss + ""))
+                        {
+                            if (ges.Operacion("delete from cliente where id_cliente = " + codigoss + ""))
+                            {
+                                lbPRESupe.Text = "Eliminado!!";
+                                lbPRESupe.Visible = true;
+                            }
+                        }
+                        else
+                        {
+                            lbPRESupe.Text = "No Eliminado :c";
+                            lbPRESupe.Visible = true;
+                        }
+
+                    }
+                    else
+                    {
+                        lbPRESupe.Text = "Seleccione un cliente";
+                        lbPRESupe.Visible = true;
+                    }
+                }
+                
+                
+                            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+        }
+    }
+}
